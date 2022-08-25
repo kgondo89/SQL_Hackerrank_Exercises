@@ -16,3 +16,12 @@ HAVING count(c.challenge_id) = (SELECT TOP 1 count(c1.challenge_id) FROM Challen
 count(c.challenge_id) NOT IN (SELECT count(c2.challenge_id) FROM Challenges AS c2 GROUP BY c2.hacker_id 
             HAVING c2.hacker_id <> c.hacker_id)
 ORDER BY count(c.challenge_id) DESC, c.hacker_id;
+
+ select m.hacker_id, h.name, sum(score) from
+(select hacker_id, challenge_id, max(score) AS score
+from Submissions group by hacker_id, challenge_id) AS m
+join Hackers as h
+on m.hacker_id = h.hacker_id
+group by m.hacker_id, h.name
+having sum(score) > 0
+order by sum(score) desc, m.hacker_id;
